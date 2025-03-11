@@ -1,9 +1,18 @@
+import 'package:expences/database/expences_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'pages/home_page.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await ExpencesDatabase.initialize();
+  runApp( ChangeNotifierProvider(
+      create: (context) => ExpencesDatabase(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
