@@ -65,7 +65,7 @@ class ExpencesDatabase extends ChangeNotifier {
 
   Future<void> deleteExpences(int id) async {
     //all we have to is matched id
-    await isar.writeTxn(()=> isar.expences.delete(id));
+    await isar.writeTxn(() => isar.expences.delete(id));
 
     //re read
     readExpences();
@@ -74,4 +74,78 @@ class ExpencesDatabase extends ChangeNotifier {
   /*
    HELPER METHODS
   */
+
+  //calculate the monthely totals
+  Future<Map<int, double>> calculateMonthlyTotals() async {
+    //read fiom the data base
+    await readExpences();
+
+    //create the map to keep track
+    Map<int, double> monthlyExpences = {};
+
+    //iterate the expencs
+    for (var expence in _allExpences) {
+      //extract the month date from db
+      int month = expence.date.month;
+
+      //if month not mention add the new one
+      if (!monthlyExpences.containsKey(month)) {
+        monthlyExpences[month] = 0;
+      }
+
+      //add monthly expences amount to bar graph
+      monthlyExpences[month] = monthlyExpences[month]! + expence.amount;
+    }
+    return monthlyExpences;
+  }
+
+  //calculate the current month total
+  Future<double> calculateCurrentMonthTotal() async {
+    //ensure expensce read from db
+    await readExpences();
+    //get current year,momth
+    int currentMonth = DateTime.now().month;
+    int currentYear = DateTime.now().year;
+    //fliter the expences include those only for this year,month
+    List<Expences> currentMonthExpences = _allExpences.where(
+      (expence) {
+        return expence.date.month == currentMonth &&
+            expence.date.year == currentYear;
+      },
+    ).toList();
+
+    //calculate total amount for the current month
+    double total = currentMonthExpences.fold(
+      0,
+      (sum, expense) => sum + expense.amount,
+    );
+
+    return total;
+  }
+
+  //get start month
+  int getMonth() {
+    //check if is new or not
+    if (_allExpences.isEmpty) {
+      return DateTime.now().month;
+    }
+    //sort all expences
+    _allExpences.sort(
+      (a, b) => a.date.compareTo(b.date),
+    );
+    return _allExpences.first.date.month;
+  }
+
+  //get the start year
+  int getYear() {
+    //check if is new or not
+    if (_allExpences.isEmpty) {
+      return DateTime.now().year;
+    }
+    //sort all expences
+    _allExpences.sort(
+      (a, b) => a.date.compareTo(b.date),
+    );
+    return _allExpences.first.date.year;
+  }
 }

@@ -19,3 +19,31 @@ String formatCurreny(double amount) {
 
   return format.format(amount);
 }
+
+//calculate month  count
+int calculateMonthCount(int startMonth, startYear, currentMonth, currentYear) {
+  int monthcount =
+      (currentYear - startYear) * 12 + currentMonth - startMonth + 1;
+  return monthcount;
+}
+
+//get the current  month name
+
+String getCurrentMonthName() {
+  DateTime now = DateTime.now();
+  List<String> months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ];
+  return months[now.month - 1];
+}
