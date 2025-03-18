@@ -16,6 +16,7 @@ class _MyBargraphState extends State<MyBargraph> {
   //create the list of the data that hold
   List<IndividualBar> barData = [];
 
+  @override
   void initState() {
     super.initState();
 
@@ -108,11 +109,11 @@ class _MyBargraphState extends State<MyBargraph> {
                             toY: data.y,
                             width: barWidth,
                             borderRadius: BorderRadius.circular(4),
-                            color: Colors.grey,
+                            color: Colors.amber,
                             backDrawRodData: BackgroundBarChartRodData(
                               show: true,
                               toY: calcualteUpperMax(),
-                              color: Colors.white,
+                              color:Colors.teal,
                             )),
                       ]),
                     )
@@ -178,10 +179,10 @@ Widget getTileWidget(double value, TitleMeta meta) {
   }
 
   return SideTitleWidget(
+    meta: meta,
     child: Text(
       text,
       style: textStyle,
     ),
-    meta: meta,
   );
 }

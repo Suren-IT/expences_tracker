@@ -76,30 +76,33 @@ class ExpencesDatabase extends ChangeNotifier {
   */
 
   //calculate the monthely totals
-  Future<Map<int, double>> calculateMonthlyTotals() async {
+  // * 2024 -0:200(jan),
+  //   2024-1:34(Feb) ....2024-11:344(dec),2025-0:34(Jan)
+  Future<Map<String, double>> calculateMonthlyTotals() async {
     //read fiom the data base
     await readExpences();
 
     //create the map to keep track
-    Map<int, double> monthlyExpences = {};
+    Map<String, double> monthlyExpences = {};
 
     //iterate the expencs
     for (var expence in _allExpences) {
-      //extract the month date from db
-      int month = expence.date.month;
+      //extract the month date from db and year
+      String yearMonth = '${expence.date.year} - ${expence.date.year}';
 
       //if month not mention add the new one
-      if (!monthlyExpences.containsKey(month)) {
-        monthlyExpences[month] = 0;
+      if (!monthlyExpences.containsKey(yearMonth)) {
+        monthlyExpences[yearMonth] = 0;
       }
 
       //add monthly expences amount to bar graph
-      monthlyExpences[month] = monthlyExpences[month]! + expence.amount;
+      monthlyExpences[yearMonth] = monthlyExpences[yearMonth]! + expence.amount;
     }
     return monthlyExpences;
   }
 
   //calculate the current month total
+
   Future<double> calculateCurrentMonthTotal() async {
     //ensure expensce read from db
     await readExpences();

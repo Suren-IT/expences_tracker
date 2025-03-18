@@ -17,34 +17,44 @@ class MylistTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Slidable(
-      endActionPane: ActionPane(
-        motion: const StretchMotion(),
-        children: [
-          //setting option
-          SlidableAction(
-            onPressed: onEditing,
-            icon: Icons.settings,
-            backgroundColor: Colors.grey,
-            foregroundColor: Colors.white,
-            borderRadius: BorderRadius.circular(4),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 25),
+      child: Slidable(
+        endActionPane: ActionPane(
+          motion: const StretchMotion(),
+          children: [
+            //setting option
+            SlidableAction(
+              onPressed: onEditing,
+              icon: Icons.settings,
+              backgroundColor: Colors.grey,
+              foregroundColor: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            
+      
+            //delete Option 
+            SlidableAction(
+              onPressed: onDeleting,
+              icon: Icons.delete,
+              backgroundColor: const Color.fromARGB(255, 241, 4, 4),
+              foregroundColor: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              ),
+      
+          ]
+          ),
+        child: Container(
+          decoration:BoxDecoration(
+            color:Colors.white,
+            borderRadius: BorderRadius.circular(8)
           ),
           
-
-          //delete Option 
-          SlidableAction(
-            onPressed: onDeleting,
-            icon: Icons.delete,
-            backgroundColor: const Color.fromARGB(255, 241, 4, 4),
-            foregroundColor: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            ),
-
-        ]
+          child: ListTile(
+            title: Text(title),
+            trailing: Text(trailing),
+          ),
         ),
-      child: ListTile(
-        title: Text(title),
-        trailing: Text(trailing),
       ),
     );
   }

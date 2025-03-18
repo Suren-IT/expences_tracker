@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController amountController = TextEditingController();
 
   //future state for load graph
-  Future<Map<int, double>>? _monthlyExpencesFuture;
+  Future<Map<String, double>>? _monthlyExpencesFuture;
   Future<double>? _calculateCurrentMonthTotal;
 
   @override
@@ -139,18 +139,17 @@ class _HomePageState extends State<HomePage> {
 
         //only display the expences for curent time
         List<Expences> currentMonthExpences = value.allExpences.where(
-          (element) {
-            return element.date.year == currentYear &&
-                element.date.month == currentMonth;
-          },
-        ).toList();
+          (expense) {
+            return expense.date.year == currentYear &&
+                expense.date.month == currentMonth;
+          }).toList();
 
         //return scaffold
         return Scaffold(
           floatingActionButton: FloatingActionButton(
             onPressed: newOpenExpences,
-            child: Icon(Icons.add),
             backgroundColor: Colors.grey,
+            child: Icon(Icons.add),
           ),
           appBar: AppBar(
             backgroundColor: Colors.transparent,
@@ -164,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       //toget the amount
                       Text(
-                        '\$' + snapshot.data!.toStringAsFixed(2),
+                        '\$${snapshot.data!.toStringAsFixed(2)}',
                       ),
                       //month name
                       Text(getCurrentMonthName()),
@@ -189,13 +188,22 @@ class _HomePageState extends State<HomePage> {
                       builder: (context, snapshot) {
                         //data is loading
                         if (snapshot.connectionState == ConnectionState.done) {
-                          final monthlyTotals = snapshot.data ?? {};
+                          Map<String, double> monthlyTotals =
+                              snapshot.data ?? {};
 
                           //list
-                          List<double> monthlySalary = List.generate(
-                              monthcount,
-                              (index) =>
-                                  monthlyTotals[startMonth + index] ?? 0.0);
+                          List<double> monthlySalary =
+                              List.generate(monthcount, (index) {
+                            //calculate the year and month
+                            int year =
+                                startYear + (startMonth + index - 1) ~/ 12;
+                            int month = (startMonth + index - 1) % 12 + 1;
+
+                            //create the key in the format 'year-month'
+                            String yearMonthKey = '$year-$month';
+                            //return the total for year-month  or ifnot
+                            return monthlyTotals[yearMonthKey] ?? 0;
+                          });
 
                           return MyBargraph(
                               monthlySalary: monthlySalary,
@@ -211,17 +219,18 @@ class _HomePageState extends State<HomePage> {
                       }),
                 ),
 
+                //sized box
+                const SizedBox(height: 15,),
                 // add the list
                 Expanded(
                   child: ListView.builder(
                     itemCount: currentMonthExpences.length,
                     itemBuilder: (context, index) {
-                      //reverse the list
-                      int reverseIndex =
-                          currentMonthExpences.length - 1 - index;
+                      //reverse the index
+                      int reverseIndex = currentMonthExpences.length - 1 - index;
+                      //get the indivitual expense
+                      Expences individualEx = currentMonthExpences[reverseIndex];
 
-                      //get the individuals
-                      Expences individualEx = value.allExpences[index];
                       //retun it in list ui
                       return MylistTile(
                         title: individualEx.name,
